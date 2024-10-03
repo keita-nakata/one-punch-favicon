@@ -4,6 +4,10 @@ from io import BytesIO
 from PIL import Image
 import svgwrite
 import json
+import boto3
+from dotenv import load_dotenv
+import uuid
+
 
 def lambda_handler(event, context):
     # Lambdaのエントリポイント
@@ -49,8 +53,18 @@ def convert_favicon(base64_image):
         zip_file.writestr("manifest.webmanifest", manifest_json)  # ManifestファイルをZIPに追加
 
     zip_io.seek(0)
-    with open('favicon_icons.zip', 'wb') as f:
-        f.write(zip_io.getvalue())
+    
+    # S3にアップロード
+    load_dotenv()
+    client = boto3.client('s3')
+    unique_id = str(uuid.uuid4())  # UUIDを生成
+    Bucket = 'forzipbucket'
+    Key = f'favicon_{unique_id}.zip'  # 一意なキーを設定
+    client.upload_fileobj(zip_io, Bucket, Key)
+
+    # ダウンロードリンクを生成
+    download_link = f"https://{Bucket}.s3.amazonaws.com/{Key}"
+    return {"download_link": download_link}
 
 def png2svg(base64_image, output_filename='icon.svg'):
     # PNG画像をSVGに変換する
@@ -63,5 +77,4 @@ def add_to_zip(zip_file, image, file_name, format):
     img_io = BytesIO()
     image.save(img_io, format=format)
     img_io.seek(0)
-    zip_file.writestr(file_name, img_io.getvalue())
-
+    zip_file.writestr(file_name, img_io.getvalue()) 
