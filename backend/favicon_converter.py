@@ -5,15 +5,6 @@ from PIL import Image
 import svgwrite
 import json
 
-def main():
-    img_path = r'./backend/img/sample.png'
-    
-    with open(img_path , 'br') as f0:
-        encode_data = base64.b64encode(f0.read())
-    # image = Image.open(img_path)
-    # png2svg(encode_data)
-    convert_favicon(encode_data)
-
 def lambda_handler(event, context):
     # Lambdaのエントリポイント
     source_image_path = event['source_image_path']
@@ -60,7 +51,6 @@ def convert_favicon(base64_image):
     zip_io.seek(0)
     with open('favicon_icons.zip', 'wb') as f:
         f.write(zip_io.getvalue())
-    # return send_file(zip_io, mimetype='application/zip', as_attachment=True, attachment_filename='converted_images.zip')
 
 def png2svg(base64_image, output_filename='icon.svg'):
     # PNG画像をSVGに変換する
@@ -74,7 +64,4 @@ def add_to_zip(zip_file, image, file_name, format):
     image.save(img_io, format=format)
     img_io.seek(0)
     zip_file.writestr(file_name, img_io.getvalue())
-
-if __name__ == "__main__":
-    main()
 
