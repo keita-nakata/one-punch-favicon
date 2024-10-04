@@ -8,12 +8,28 @@ import boto3
 from dotenv import load_dotenv
 import uuid
 
-
+"""
+aws lambdaを使うときにこれをハンドラ関数として使いたかったが、うまくいかなかった。
+一応残しておく。
+"""
 def lambda_handler(event, context):
-    # Lambdaのエントリポイント
     source_image_path = event['source_image_path']
     return convert_favicon(source_image_path)
 
+
+"""
+メインの関数
+base64でエンコードされた画像を受け取り、faviconのZIPファイルを生成してS3にアップロードする。
+生成されたZIPファイルのダウンロードリンクを返す。
+
+zipファイルに含まれるファイルは以下の通り
+- apple-touch-icon.png (180x180)
+- icon-192.png (192x192)
+- icon-512.png (512x512)
+- icon.svg
+- favicon.ico (30x30)
+- manifest.webmanifest
+"""
 def convert_favicon(base64_image):
     # Base64デコードして画像を生成
     image_data = base64.b64decode(base64_image)
@@ -66,15 +82,18 @@ def convert_favicon(base64_image):
     download_link = f"https://{Bucket}.s3.amazonaws.com/{Key}"
     return {"download_link": download_link}
 
+
+# PNG画像をSVGに変換する関数
 def png2svg(base64_image, output_filename='icon.svg'):
-    # PNG画像をSVGに変換する
     dwg = svgwrite.Drawing(output_filename)
-    dwg.add(dwg.image('data:image/png;base64,' + base64_image.decode("ascii"), size=(500, 500)))
+    # dwg.add(dwg.image('data:image/png;base64,' + base64_image.decode("ascii"), size=(500, 500)))
+    dwg.add(dwg.image('data:image/png;base64,' + base64_image, size=(500, 500)))
     return dwg.tostring()
 
+
+# 画像をZIPに追加する関数
 def add_to_zip(zip_file, image, file_name, format):
-    """画像をZIPに追加する"""
     img_io = BytesIO()
     image.save(img_io, format=format)
     img_io.seek(0)
-    zip_file.writestr(file_name, img_io.getvalue()) 
+    zip_file.writestr(file_name, img_io.getvalue())  
