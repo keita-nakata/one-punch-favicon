@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// App.tsx
+
+import './App.css';
+import { Box, Typography } from '@mui/material';
+import ImageUploader from './components/ImageUploader';
+import Title from './components/Title';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Box 
+      sx={{ 
+        display: "flex", 
+        flexDirection: 'column', 
+        alignItems: 'center', // 中央寄せに戻す
+        justifyContent: 'flex-start', 
+        minHeight: '100vh', 
+        width: '100%', // 横幅いっぱい
+      }}
+    >
+      <Box sx={{ alignSelf: 'center', textAlign: 'center', width: '100%' }}> 
+        <Title title="faviconセット 一発作成" />
+        <Typography variant="body1" align="center" fontFamily={'BIZ UDPGothic'}>
+          画像をアップロードすると、faviconセットを一発で作成します。
+        </Typography>
+      </Box>
+      <Box sx={{ justifyContent: 'center', width: '100%' }}> {/* 横幅100% */}
+        <ImageUploader />
+      </Box>
+    </Box>
+  );
 }
 
-export default App
+export default App;
+
+
