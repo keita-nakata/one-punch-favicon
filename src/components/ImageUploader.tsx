@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Box, Typography, Link } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 const API_ENDPOINT = 'http://127.0.0.1:8000/favicon';
 
@@ -10,6 +11,7 @@ const ImageUploader: React.FC = () => {
   const [fileName, setFileName] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [DownloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (base64_image: string) => {
     const requestBody = { "base64_image": base64_image };
@@ -24,11 +26,14 @@ const ImageUploader: React.FC = () => {
       if (response.ok) {
         const result = await response.json();
         setDownloadUrl(result.zipfile_url);
+        console.log('アップロード成功:', result.zipfile_url);
       } else {
         console.error('アップロード失敗:', response.statusText);
+        setError('アップロードに失敗しました。');
       }
     } catch (error) {
       console.error('エラー発生:', error);
+      setError('エラーが発生しました。');
     }
   };
 
@@ -69,71 +74,91 @@ const ImageUploader: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 2,
-        padding: 2,
-        width: '100%',   // widthをパーセンテージに変更
-        maxWidth: '1000px', // 最大幅を1000pxに制限
-        backgroundColor: '#f0f0f0',
-        borderRadius: '8px',
-        margin: '0 auto', // 水平方向の中央揃え
-      }}
-    >
-      {/* ドラッグアンドドロップまたはクリックで画像を選択 */}
+    <Box>
       <Box
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={handleClickUpload}
         sx={{
-          border: '2px dashed gray',
-          borderRadius: '8px',
-          width: '90%',
-          height: '200px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: isDragging ? '#f0f0f0' : '#fff',
-          cursor: 'pointer',
+          gap: 2,
+          padding: 2,
+          width: '100%',   // widthをパーセンテージに変更
+          maxWidth: '1000px', // 最大幅を1000pxに制限
+          backgroundColor: '#f0f0f0',
+          borderRadius: '8px',
+          margin: '0 auto', // 水平方向の中央揃え
         }}
       >
-        <UploadFileIcon style={{ fontSize: 50 }} />
-        <Typography variant="subtitle1" fontFamily={'BIZ UDPGothic'}>
-          ここにファイルをドラッグするか、クリックして選択
-        </Typography>
+        {/* ドラッグアンドドロップまたはクリックで画像を選択 */}
+        <Box
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handleClickUpload}
+          sx={{
+            border: '2px dashed gray',
+            borderRadius: '8px',
+            width: '90%',
+            height: '200px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: isDragging ? '#f0f0f0' : '#fff',
+            cursor: 'pointer',
+          }}
+        >
+          <UploadFileIcon style={{ fontSize: 50 }} />
+          <Typography variant="subtitle1" fontFamily={'BIZ UDPGothic'}>
+            ここにファイルをドラッグするか、クリックして選択
+          </Typography>
+        </Box>
+
+        <input
+          type="file"
+          accept="image/*"
+          id="file-input"
+          style={{ display: 'none' }}
+          onChange={handleFileSelect}
+        />
+
+        <Box>
+          {DownloadUrl ? (
+            <Link href={DownloadUrl} download underline="none">
+              <Button variant="contained" color="primary">
+                <ArrowCircleDownIcon />
+                ダウンロード
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="contained" color="primary" disabled>
+              <ArrowCircleDownIcon />
+              ダウンロード
+            </Button>
+          )}
+        </Box>
       </Box>
-
-      <input
-        type="file"
-        accept="image/*"
-        id="file-input"
-        style={{ display: 'none' }}
-        onChange={handleFileSelect}
-      />
-
-      {DownloadUrl ? (
-        <Link href={DownloadUrl} download underline="none">
-          <Button variant="contained" color="primary">
-            <ArrowCircleDownIcon />
-            ダウンロード
-          </Button>
-        </Link>
-      ) : (
-        <Button variant="contained" color="primary" disabled>
-          <ArrowCircleDownIcon />
-          ダウンロード
-        </Button>
-      )}
-
-      {fileName && <Typography variant="subtitle1">{fileName}</Typography>}
-      {base64Image && <img src={base64Image} alt="preview" style={{ width: '200px', borderRadius: '8px' }} />}
+      {fileName &&
+        <Box sx={{ marginTop: 2, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <Box sx={{
+            border: '1px solid',
+            borderRadius: '8px',
+            padding: '8px',
+            margin: '16px',
+          }}>
+            <Typography variant="subtitle1">アップロードファイル</Typography>
+            <Typography variant="subtitle1">{fileName}</Typography>
+          </Box>
+          <PlayArrowIcon style={{ fontSize: '50px' }} />
+          <Box sx={{
+            margin: '16px',
+          }}>
+            {base64Image && <img src={base64Image} alt="preview" style={{ width: '200px', borderRadius: '8px' }} />}
+          </Box>
+          {error && <Typography variant="subtitle1" color="error">{error}</Typography>}
+        </Box>
+      }
     </Box>
-
   );
 };
 

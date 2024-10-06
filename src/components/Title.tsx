@@ -8,7 +8,7 @@ interface TitleProps {
 const Title: React.FC<TitleProps> = ({title}) => {
   return (
     <Box>
-      <Typography variant="h4" align="center" sx={{ fontFamily: 'BIZ UDPGothic'}}>{title}</Typography>
+      <Typography variant="h4" align="center" sx={{ fontFamily: 'BIZ UDPGothic', marginBottom: '10px'}}>{title}</Typography>
     </Box>
   )
 }
