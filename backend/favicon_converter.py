@@ -80,7 +80,7 @@ def convert_favicon(base64_image):
 
     # ダウンロードリンクを生成
     download_link = f"https://{Bucket}.s3.amazonaws.com/{Key}"
-    return {"download_link": download_link}
+    return download_link
 
 
 # PNG画像をSVGに変換する関数
