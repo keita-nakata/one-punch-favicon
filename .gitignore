@@ -26,4 +26,5 @@ dist-ssr
 backend/.venv
 backend/img
 backend/lambda_function
+backend/__pycache__
 *.env
