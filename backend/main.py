@@ -26,6 +26,6 @@ async def convert_favicon_api(image: Image):
     zipfile_url = convert_favicon(image.base64_image)
     return {"zipfile_url": zipfile_url}
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run("main:app", port=8000, reload=True)
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run("main:app", port=8000, reload=True)

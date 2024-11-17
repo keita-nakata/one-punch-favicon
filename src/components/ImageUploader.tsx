@@ -4,7 +4,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
-const API_ENDPOINT = 'http://127.0.0.1:8000/favicon';
+const API_ENDPOINT = 'https://favicon-maker-f731ab933b02.herokuapp.com/favicon';
 
 const ImageUploader: React.FC = () => {
   const [base64Image, setBase64Image] = useState<string | null>(null);
