@@ -54,9 +54,9 @@ def convert_favicon(base64_image):
         svg = png2svg(base64_image)
         zip_file.writestr("icon.svg", svg)
 
-        # ICO 30x30
-        ico_30x30 = image.resize((30, 30))
-        add_to_zip(zip_file, ico_30x30, "favicon.ico", 'ICO')
+        # ICO 32x32
+        ico_32x32 = image.resize((32, 32), Image.LANCZOS)  # 高品質リサイズ
+        add_to_zip(zip_file, ico_32x32, "favicon.ico", 'ICO', sizes=[(32, 32)])
         
         # Manifestファイルを追加
         manifest_content = {
